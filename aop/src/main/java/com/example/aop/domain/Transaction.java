@@ -1,7 +1,6 @@
 package com.example.aop.domain;
 
 import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -46,4 +45,32 @@ public class Transaction {
     @CreatedDate
     private LocalDateTime createdAt;
 
+    private Transaction(AccountNumber sender,
+                       AccountNumber receiver,
+                       Long amount,
+                       TransactionType type,
+                       TransactionStatus status) {
+        this.sender = sender;
+        this.receiver = receiver;
+        this.amount = amount;
+        this.type = type;
+        this.status = status;
+    }
+
+    public static Transaction transfer(Account sender, Account receiver, Long amount, TransactionStatus status) {
+        return new Transaction(
+            sender.getAccountNumber(),
+            receiver.getAccountNumber(),
+            amount,
+            TransactionType.TRANSFER,
+            status);
+    }
+
+    public void success() {
+        this.status = TransactionStatus.SUCCESS;
+    }
+
+    public void fail() {
+        this.status = TransactionStatus.FAILED;
+    }
 }
